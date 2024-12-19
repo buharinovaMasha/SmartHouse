@@ -8,3 +8,4 @@ routers_map: MappingProxyType[str, tuple[APIRouter, ...]] = MappingProxyType(
         "v1": (router_v1,),
     },
 )
+
