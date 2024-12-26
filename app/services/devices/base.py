@@ -1,32 +1,25 @@
 from gpiozero import OutputDevice
-
+from app.api.v1.dto.response import DeviceResponse
 
 class BaseDeviceService:
-    """
- Базовый класс для управления устройством через GPIO.
-    """
 
     def __init__(self, pin: int, device_name: str):
         self.device_name = device_name
         self.relay = OutputDevice(pin, active_high=True, initial_value=False)
 
-    def turn_on(self):
-        """
- Включение устройства.
-        """
-        self.relay.on()
-        return {"status": "on", "device": self.device_name}
+    def set_state(self, state: bool) -> DeviceResponse:
+        if state:
+            self.relay.on()
+        else:
+            self.relay.off()
+        return DeviceResponse(
+            status="on" if state else "off",
+            device=self.device_name,
+        )
 
-    def turn_off(self):
-        """
- Выключение устройства.
-        """
-        self.relay.off()
-        return {"status": "off", "device": self.device_name}
-
-    def get_status(self):
-        """
- Получение текущего состояния устройства.
-        """
+    def get_status(self) -> DeviceResponse:
         status = "on" if self.relay.value else "off"
-        return {"status": status, "device": self.device_name}
+        return DeviceResponse(
+            status=status,
+            device=self.device_name,
+        )
