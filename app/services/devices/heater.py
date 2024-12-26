@@ -2,9 +2,8 @@ from app.services.devices.base import BaseDeviceService
 
 
 class HeaterService(BaseDeviceService):
-    """
- Сервис управления батареей.
-    """
+   device_name = "heater"
 
-    def __init__(self):
-        super().__init__(pin=17, device_name="heater")
+@classmethod
+def initialize(cls):
+        cls.initialize_gpio(pin=17)

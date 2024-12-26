@@ -1,25 +1,29 @@
-from gpiozero import OutputDevice
-from app.api.v1.dto.response import DeviceResponse
+from gpiozero import OutputDevice, Device
+from gpiozero.pins.mock import MockFactory
 
 class BaseDeviceService:
+    relay: OutputDevice | None = None
+    device_name: str = "base_device"
 
-    def __init__(self, pin: int, device_name: str):
-        self.device_name = device_name
-        self.relay = OutputDevice(pin, active_high=True, initial_value=False)
+    @classmethod
+    def initialize_gpio(cls, pin: int):
+        try:
+            cls.relay = OutputDevice(pin, active_high=True, initial_value=False)
+        except Exception as e:
+            print(f"GPIO Error: {e}")
+            print("Switching to mock GPIO for development...")
+            Device.pin_factory = MockFactory()  # Установить симуляцию GPIO
+            cls.relay = OutputDevice(pin, active_high=True, initial_value=False)
 
-    def set_state(self, state: bool) -> DeviceResponse:
+    @classmethod
+    def set_state(cls, state: bool):
         if state:
-            self.relay.on()
+            cls.relay.on()
         else:
-            self.relay.off()
-        return DeviceResponse(
-            status="on" if state else "off",
-            device=self.device_name,
-        )
+            cls.relay.off()
+        return {"status": "on" if state else "off", "device": cls.device_name}
 
-    def get_status(self) -> DeviceResponse:
-        status = "on" if self.relay.value else "off"
-        return DeviceResponse(
-            status=status,
-            device=self.device_name,
-        )
+    @classmethod
+    def get_status(cls):
+        status = "on" if cls.relay.value else "off"
+        return {"status": status, "device": cls.device_name}
