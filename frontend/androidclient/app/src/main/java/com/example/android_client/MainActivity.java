@@ -1,20 +1,21 @@
 package com.example.android_client;
 
 import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginListener {
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
- // Загружаем LoginFragment при старте приложения
+
+    // Загружаем LoginFragment при старте приложения
     if (savedInstanceState == null) {
-      loadLoginFragment();            
+      loadLoginFragment();
     }
-     }
+  }
 
   private void loadLoginFragment() {
     LoginFragment loginFragment = new LoginFragment();
@@ -31,5 +32,4 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
     transaction.replace(R.id.fragment_container, controlFragment);
     transaction.commit();
   }
-
 }
